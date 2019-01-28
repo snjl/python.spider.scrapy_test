@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pymongo
+import json
 from scrapy.exceptions import DropItem
 
 
@@ -22,6 +23,7 @@ class TutorialPipeline(object):
             print('text is null')
             return DropItem("Missing Text")
 
+
 # MongoDB存储数据管道
 class MongoPipeline(object):
     def __init__(self, mongo_uri, mongo_db):
@@ -40,6 +42,7 @@ class MongoPipeline(object):
     def open_spider(self, spider):
         self.client = pymongo.MongoClient(self.mongo_uri)
         self.db = self.client[self.mongo_db]
+        spider.logger.info("mongodb start!")
 
     # 最重要的process_item
     def process_item(self, item, spider):
@@ -51,3 +54,19 @@ class MongoPipeline(object):
     # 管道完毕时自动运行
     def close_spider(self, spider):
         self.client.close()
+        spider.logger.info("mongodb close!")
+
+
+class JsonWriterPipeline(object):
+    def __init__(self):
+        self.file = open('items.jl', 'a+')
+        print("file open!")
+
+    def process_item(self, item, spider):
+        line = json.dumps(dict(item)) + "\n"
+        self.file.write(line)
+        return item
+
+    def close_spider(self, spider):
+        self.file.close()
+        spider.logger.info("file close!")
