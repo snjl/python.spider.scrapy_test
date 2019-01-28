@@ -1,0 +1,1 @@
+# python.spider.scrapy_test
