@@ -30,5 +30,5 @@ class QuotesspiderSpider(scrapy.Spider):
         if next_page:
             # 使用urljoin获取绝对地址
             next_url = response.urljoin(next_page)
-            # 回调函数，继续调用该parse函数，传入next_url进行请求
+            # 回调函数，继续调用该parse函数，传入next_url进行请求,生成一个新的Request加入队列
             yield scrapy.Request(url=next_url, callback=self.parse)
